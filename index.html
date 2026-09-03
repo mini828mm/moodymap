@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#fffaf4">
+<title>moodymap</title>
+<style>
+:root{--rose:#ef7f89;--cream:#fffaf4;--ink:#343434;--muted:#8d847b;--line:#eadfd3;--sage:#a9c5a2;--lav:#b8a6d8;--blue:#a9d3e7}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:#eee8df;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,textarea{font:inherit}.app{width:min(430px,100vw);height:100dvh;margin:auto;background:var(--cream);position:relative;overflow:hidden}
+header{height:68px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #eee6dc;background:#fffdf9cc;backdrop-filter:blur(12px);position:relative;z-index:5}
+.logo{font:700 italic 25px Georgia,serif;letter-spacing:-1.2px}.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#d9b39d,#765a50);border:2px solid white}
+.screen{display:none;height:calc(100dvh - 132px);overflow:auto}.screen.active{display:block}
+.map{height:100%;position:relative;overflow:hidden;background:#e9eee6}
+.map::before{content:"";position:absolute;inset:-20%;background:
+linear-gradient(23deg,transparent 0 45%,#d5dcd2 46% 47%,transparent 48%),
+linear-gradient(112deg,transparent 0 49%,#d8d4cc 50% 51%,transparent 52%),
+linear-gradient(180deg,transparent 0 58%,#d9e6d5 59% 73%,transparent 74%);
+transform:rotate(-4deg);opacity:.9}
+.map::after{content:"";position:absolute;left:42%;top:-10%;width:26%;height:130%;background:#d8ebef;border-radius:48%;transform:rotate(14deg);opacity:.9}
+.map-top{position:absolute;z-index:2;top:18px;left:16px;right:16px;display:flex;justify-content:space-between;align-items:center}
+.pill{background:#fffdf9ed;border:1px solid #eee4d9;border-radius:18px;padding:9px 12px;font-size:12px;box-shadow:0 5px 18px #00000010}
+.pin{position:absolute;z-index:3;width:42px;height:42px;border-radius:50% 50% 50% 8px;transform:rotate(-45deg);display:grid;place-items:center;box-shadow:0 7px 16px #0002;border:3px solid #fff;cursor:pointer}
+.pin b{transform:rotate(45deg);color:#fff;font-size:17px}.pin.one{left:23%;top:34%;background:var(--rose)}.pin.two{left:63%;top:24%;background:var(--lav)}.pin.three{left:71%;top:58%;background:var(--sage)}.pin.four{left:36%;top:70%;background:var(--blue)}
+.map-card{position:absolute;z-index:4;left:14px;right:14px;bottom:14px;background:#fffdf9;border-radius:23px;padding:11px;display:flex;gap:12px;box-shadow:0 14px 35px #0002;cursor:pointer}
+.photo{width:72px;height:72px;border-radius:16px;flex:none;background:linear-gradient(135deg,#654e43,#d0aa8e 55%,#62695e)}
+.map-card h3{font:600 17px Georgia,serif;margin:2px 0 4px}.muted{font-size:12px;color:var(--muted)}.tag{display:inline-block;margin-top:7px;padding:5px 9px;border-radius:12px;background:#fff0f1;color:#d65f6b;font-size:11px}
+.feed{padding:18px 15px 20px}.feed-title{font:600 27px Georgia,serif;margin:0 4px 15px}.post{background:#fffdf9;border:1px solid var(--line);border-radius:22px;overflow:hidden;margin-bottom:15px}.post-photo{height:225px;background:linear-gradient(135deg,#4e403b,#bd8e74 54%,#d9c2a6);position:relative}.post-photo.b{background:linear-gradient(135deg,#a9c9cf,#e7b4a7 52%,#776b82)}.post-tag{position:absolute;right:12px;bottom:12px;background:#fffdf9ee;padding:8px 10px;border-radius:13px;font-size:11px}.post-body{padding:13px 14px}.user{font-weight:700;font-size:13px}.caption{font-size:14px;line-height:1.45;margin:8px 0}.actions{color:#80766d;font-size:13px;display:flex;gap:17px}.actions button{border:0;background:none;padding:0;color:inherit;cursor:pointer}
+.add{padding:18px 16px 25px}.add h1,.profile h1{font:600 27px Georgia,serif;margin:2px 0 15px}.search{width:100%;border:0;background:#f2ece4;border-radius:16px;padding:14px 15px;outline:none}.place-preview{margin-top:14px;border-radius:22px;overflow:hidden;background:#fffdf9;border:1px solid var(--line)}.place-image{height:155px;background:linear-gradient(135deg,#70564a,#d1ab8e,#68736a)}.place-copy{padding:14px}.place-copy h2{font:600 21px Georgia,serif;margin:0 0 4px}.question{font-size:13px;margin:17px 0 9px;font-weight:650}.moods{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.mood{border:1px solid var(--line);background:#fff;border-radius:14px;padding:10px 3px;font-size:10px;cursor:pointer}.mood.sel{border-color:var(--rose);background:#fff0f1}.memory{width:100%;min-height:100px;margin-top:9px;border:1px solid var(--line);border-radius:15px;padding:12px;outline:none;resize:none}.photo-add{display:flex;gap:8px;margin-top:9px}.photo-chip{flex:1;border:1px dashed #d8cbbd;border-radius:14px;padding:12px;text-align:center;color:var(--muted);font-size:11px}.save{width:100%;margin-top:11px;border:0;border-radius:16px;padding:14px;background:var(--rose);color:white;font-weight:750;cursor:pointer}.privacy{display:flex;align-items:center;justify-content:space-between;margin-top:10px;font-size:12px;color:var(--muted)}
+.profile{padding:20px 16px}.profile-top{display:flex;gap:14px;align-items:center}.big-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#d9b39d,#765a50)}.profile h2{font:600 25px Georgia,serif;margin:0}.stats{display:flex;justify-content:space-around;background:#f6efe6;border-radius:18px;padding:15px;margin:20px 0}.stats b{display:block;text-align:center;font-size:18px}.stats span{font-size:11px;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.tile{aspect-ratio:1;border-radius:15px;background:linear-gradient(135deg,#806356,#d7b79d)}.tile:nth-child(2){background:linear-gradient(135deg,#9fbec6,#e9bcae)}.tile:nth-child(3){background:linear-gradient(135deg,#829579,#d6d2aa)}.tile:nth-child(4){background:linear-gradient(135deg,#ad96c6,#e8dded)}.tile:nth-child(5){background:linear-gradient(135deg,#c39b83,#69747a)}.tile:nth-child(6){background:linear-gradient(135deg,#778b9e,#dfc0a7)}
+nav{height:64px;position:absolute;left:0;right:0;bottom:0;z-index:6;display:flex;align-items:center;justify-content:space-around;background:#fffdf9ee;border-top:1px solid var(--line);backdrop-filter:blur(12px)}.nav{border:0;background:none;color:#90867d;font-size:20px;cursor:pointer}.nav.active{color:var(--rose)}.plus{width:48px;height:48px;border-radius:50%;border:0;background:var(--rose);color:#fff;font-size:28px;box-shadow:0 7px 18px #ef7f8950;cursor:pointer}
+.toast{display:none;position:absolute;z-index:20;left:18px;right:18px;bottom:78px;background:#343434;color:#fff;border-radius:15px;padding:13px;text-align:center;font-size:13px}.modal{display:none;position:absolute;inset:0;z-index:30;background:#0005;align-items:flex-end}.modal.show{display:flex}.sheet{background:#fffdf9;border-radius:26px 26px 0 0;width:100%;padding:18px 18px 30px}.sheet h2{font:600 21px Georgia,serif;margin:0 0 8px}.sheet p{font-size:13px;line-height:1.5;color:#6e665e}.close{float:right;border:0;background:#f3ede6;border-radius:50%;width:30px;height:30px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="logo">moodymap</div><div class="avatar"></div></header>
+
+<section id="map" class="screen active">
+<div class="map">
+<div class="map-top"><div class="pill">🗺️ My world · <b id="placeCount">146</b> places</div><button class="pill" onclick="showInfo()">ⓘ</button></div>
+<div class="pin one" onclick="place('Café Kitsuné','Paris, France','☕ cozy')"><b>♥</b></div>
+<div class="pin two" onclick="place('Shibuya Sky','Tokyo, Japan','✦ magical')"><b>✦</b></div>
+<div class="pin three" onclick="place('Nong Nooch Garden','Pattaya, Thailand','🌿 peaceful')"><b>●</b></div>
+<div class="pin four" onclick="place('The Beach','Dubai, UAE','☁ peaceful')"><b>♡</b></div>
+<div class="map-card" onclick="place('Café Kitsuné','Paris, France','☕ cozy')"><div class="photo"></div><div><h3>Café Kitsuné</h3><div class="muted">Paris, France · Apr 12, 2026</div><div class="tag">☕ cozy · loved it</div></div></div>
+</div></section>
+
+<section id="feed" class="screen"><div class="feed"><h1 class="feed-title">Moments</h1>
+<article class="post"><div class="post-photo"><div class="post-tag">☕ cozy</div></div><div class="post-body"><div class="user">sunmin · Paris, France</div><div class="caption">Unexpectedly found my new favorite café. 🤍</div><div class="actions"><button onclick="like(this)">♡ 24</button><button>♡ 3</button><button>▱ Save</button></div></div></article>
+<article class="post"><div class="post-photo b"><div class="post-tag">✦ magical</div></div><div class="post-body"><div class="user">joodiary · Tokyo, Japan</div><div class="caption">A little moment I want to remember.</div><div class="actions"><button onclick="like(this)">♡ 31</button><button>♡ 5</button><button>▱ Save</button></div></div></article>
+</div></section>
+
+<section id="add" class="screen"><div class="add"><h1>Add a memory</h1><input id="search" class="search" placeholder="🔎 Search a place..." value="Café de Flore">
+<div class="place-preview"><div class="place-image"></div><div class="place-copy"><h2 id="placeName">Café de Flore</h2><div class="muted" id="placeAddress">172 Bd Saint-Germain · Paris, France</div>
+<div class="question">How did you feel?</div>
+<div class="moods">
+<button class="mood sel" onclick="mood(this)">♥ loved</button><button class="mood" onclick="mood(this)">✦ magical</button><button class="mood" onclick="mood(this)">☁ peaceful</button><button class="mood" onclick="mood(this)">☕ cozy</button>
+<button class="mood" onclick="mood(this)">☺ fun</button><button class="mood" onclick="mood(this)">🌿 bittersweet</button><button class="mood" onclick="mood(this)">😐 meh</button><button class="mood" onclick="mood(this)">♡ never again</button>
+</div>
+<textarea id="memory" class="memory" placeholder="Write a little memory...">혼자 앉아서 커피 마셨던 시간. 바람도 좋고, 마음이 편안했던 순간.</textarea>
+<div class="photo-add"><div class="photo-chip">＋ Add photo</div><div class="photo-chip">📅 Today</div></div>
+<div class="privacy"><span>Share on feed</span><input id="public" type="checkbox" checked></div>
+<button class="save" onclick="saveMemory()">Save Memory</button>
+</div></div></div></section>
+
+<section id="profile" class="screen"><div class="profile"><div class="profile-top"><div class="big-avatar"></div><div><h2>sunmin</h2><div class="muted">@moody.s · collecting beautiful moments</div></div></div>
+<div class="stats"><div><b id="profilePlaces">146</b><span>Places</span></div><div><b>12</b><span>Countries</span></div><div><b>38</b><span>Cities</span></div></div>
+<h3 style="font:600 19px Georgia,serif">Recently added</h3><div class="grid"><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div></div></div></section>
+
+<nav><button class="nav active" onclick="go('map',this)">⌖</button><button class="nav" onclick="go('feed',this)">⌂</button><button class="plus" onclick="go('add')">+</button><button class="nav" onclick="showToast('Saved memories will appear here ✨')">♡</button><button class="nav" onclick="go('profile',this)">◯</button></nav>
+<div id="toast" class="toast"></div>
+<div id="modal" class="modal"><div class="sheet"><button class="close" onclick="closeInfo()">×</button><h2>About MoodyMap</h2><p>MoodyMap is a place-based memory journal: save where you went, how it felt, and the little moments you want to remember.</p><p><b>Map your moments, not just your places.</b></p></div></div>
+</div>
+<script>
+const screens=['map','feed','add','profile'];
+function go(id,el){screens.forEach(x=>document.getElementById(x).classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));if(el)el.classList.add('active')}
+function mood(el){document.querySelectorAll('.mood').forEach(x=>x.classList.remove('sel'));el.classList.add('sel')}
+function showToast(t){const x=document.getElementById('toast');x.textContent=t;x.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>x.style.display='none',1800)}
+function place(name,address,m){document.getElementById('placeName').textContent=name;document.getElementById('placeAddress').textContent=address;document.querySelectorAll('.mood').forEach(x=>x.classList.remove('sel'));[...document.querySelectorAll('.mood')].find(x=>x.textContent.includes(m.replace('☕ ','').replace('✦ ','').replace('☁ ','').replace('🌿 ','')))?.classList.add('sel');go('add')}
+function saveMemory(){let n=parseInt(localStorage.getItem('mm_places')||'146')+1;localStorage.setItem('mm_places',n);document.getElementById('placeCount').textContent=n;document.getElementById('profilePlaces').textContent=n;showToast('Memory saved to your map ♥');setTimeout(()=>go('map',document.querySelector('.nav')),700)}
+function like(btn){let n=parseInt(btn.textContent.match(/\d+/)?.[0]||0)+1;btn.textContent='♥ '+n;btn.style.color='#ef7f89'}
+function showInfo(){document.getElementById('modal').classList.add('show')}function closeInfo(){document.getElementById('modal').classList.remove('show')}
+(function(){let n=localStorage.getItem('mm_places');if(n){document.getElementById('placeCount').textContent=n;document.getElementById('profilePlaces').textContent=n}})();
+</script>
+</body></html>
