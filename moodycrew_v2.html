@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#fffaf4">
+<title>moodycrew</title>
+<style>
+:root{--rose:#ef7f89;--cream:#fffaf4;--ink:#343434;--muted:#8d847b;--line:#eadfd3;--sage:#a9c5a2;--lav:#b8a6d8;--blue:#a9d3e7}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:#eee8df;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,textarea{font:inherit}.app{width:min(430px,100vw);height:100dvh;margin:auto;background:var(--cream);position:relative;overflow:hidden}
+header{height:68px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #eee6dc;background:#fffdf9cc;backdrop-filter:blur(12px);position:relative;z-index:5}
+.logo{font:700 italic 25px Georgia,serif;letter-spacing:-1.2px}.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#d9b39d,#765a50);border:2px solid white}
+.screen{display:none;height:calc(100dvh - 132px);overflow:auto}.screen.active{display:block}
+.map{height:100%;position:relative;overflow:hidden;background:#e9eee6}
+.map::before{content:"";position:absolute;inset:-20%;background:
+linear-gradient(23deg,transparent 0 45%,#d5dcd2 46% 47%,transparent 48%),
+linear-gradient(112deg,transparent 0 49%,#d8d4cc 50% 51%,transparent 52%),
+linear-gradient(180deg,transparent 0 58%,#d9e6d5 59% 73%,transparent 74%);
+transform:rotate(-4deg);opacity:.9}
+.map::after{content:"";position:absolute;left:42%;top:-10%;width:26%;height:130%;background:#d8ebef;border-radius:48%;transform:rotate(14deg);opacity:.9}
+.map-top{position:absolute;z-index:2;top:18px;left:16px;right:16px;display:flex;justify-content:space-between;align-items:center}
+.pill{background:#fffdf9ed;border:1px solid #eee4d9;border-radius:18px;padding:9px 12px;font-size:12px;box-shadow:0 5px 18px #00000010}
+.pin{position:absolute;z-index:3;width:42px;height:42px;border-radius:50% 50% 50% 8px;transform:rotate(-45deg);display:grid;place-items:center;box-shadow:0 7px 16px #0002;border:3px solid #fff;cursor:pointer}
+.pin b{transform:rotate(45deg);color:#fff;font-size:17px}.pin.one{left:23%;top:34%;background:var(--rose)}.pin.two{left:63%;top:24%;background:var(--lav)}.pin.three{left:71%;top:58%;background:var(--sage)}.pin.four{left:36%;top:70%;background:var(--blue)}
+.map-card{position:absolute;z-index:4;left:14px;right:14px;bottom:14px;background:#fffdf9;border-radius:23px;padding:11px;display:flex;gap:12px;box-shadow:0 14px 35px #0002;cursor:pointer}
+.photo{width:72px;height:72px;border-radius:16px;flex:none;background:linear-gradient(135deg,#654e43,#d0aa8e 55%,#62695e)}
+.map-card h3{font:600 17px Georgia,serif;margin:2px 0 4px}.muted{font-size:12px;color:var(--muted)}.tag{display:inline-block;margin-top:7px;padding:5px 9px;border-radius:12px;background:#fff0f1;color:#d65f6b;font-size:11px}
+.feed{padding:18px 15px 20px}.feed-title{font:600 27px Georgia,serif;margin:0 4px 15px}.post{background:#fffdf9;border:1px solid var(--line);border-radius:22px;overflow:hidden;margin-bottom:15px}.post-photo{height:225px;background:linear-gradient(135deg,#4e403b,#bd8e74 54%,#d9c2a6);position:relative}.post-photo.b{background:linear-gradient(135deg,#a9c9cf,#e7b4a7 52%,#776b82)}.post-tag{position:absolute;right:12px;bottom:12px;background:#fffdf9ee;padding:8px 10px;border-radius:13px;font-size:11px}.post-body{padding:13px 14px}.user{font-weight:700;font-size:13px}.caption{font-size:14px;line-height:1.45;margin:8px 0}.actions{color:#80766d;font-size:13px;display:flex;gap:17px}.actions button{border:0;background:none;padding:0;color:inherit;cursor:pointer}
+.add{padding:18px 16px 25px}.add h1,.profile h1{font:600 27px Georgia,serif;margin:2px 0 15px}.search{width:100%;border:0;background:#f2ece4;border-radius:16px;padding:14px 15px;outline:none}.place-preview{margin-top:14px;border-radius:22px;overflow:hidden;background:#fffdf9;border:1px solid var(--line)}.place-image{height:155px;background:linear-gradient(135deg,#70564a,#d1ab8e,#68736a)}.place-copy{padding:14px}.place-copy h2{font:600 21px Georgia,serif;margin:0 0 4px}.question{font-size:13px;margin:17px 0 9px;font-weight:650}.moods{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.mood{border:1px solid var(--line);background:#fff;border-radius:14px;padding:10px 3px;font-size:10px;cursor:pointer}.mood.sel{border-color:var(--rose);background:#fff0f1}.memory{width:100%;min-height:100px;margin-top:9px;border:1px solid var(--line);border-radius:15px;padding:12px;outline:none;resize:none}.photo-add{display:flex;gap:8px;margin-top:9px}.photo-chip{flex:1;border:1px dashed #d8cbbd;border-radius:14px;padding:12px;text-align:center;color:var(--muted);font-size:11px}.save{width:100%;margin-top:11px;border:0;border-radius:16px;padding:14px;background:var(--rose);color:white;font-weight:750;cursor:pointer}.privacy{display:flex;align-items:center;justify-content:space-between;margin-top:10px;font-size:12px;color:var(--muted)}
+.profile{padding:20px 16px}.profile-top{display:flex;gap:14px;align-items:center}.big-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#d9b39d,#765a50)}.profile h2{font:600 25px Georgia,serif;margin:0}.stats{display:flex;justify-content:space-around;background:#f6efe6;border-radius:18px;padding:15px;margin:20px 0}.stats b{display:block;text-align:center;font-size:18px}.stats span{font-size:11px;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.tile{aspect-ratio:1;border-radius:15px;background:linear-gradient(135deg,#806356,#d7b79d)}.tile:nth-child(2){background:linear-gradient(135deg,#9fbec6,#e9bcae)}.tile:nth-child(3){background:linear-gradient(135deg,#829579,#d6d2aa)}.tile:nth-child(4){background:linear-gradient(135deg,#ad96c6,#e8dded)}.tile:nth-child(5){background:linear-gradient(135deg,#c39b83,#69747a)}.tile:nth-child(6){background:linear-gradient(135deg,#778b9e,#dfc0a7)}
+nav{height:64px;position:absolute;left:0;right:0;bottom:0;z-index:6;display:flex;align-items:center;justify-content:space-around;background:#fffdf9ee;border-top:1px solid var(--line);backdrop-filter:blur(12px)}.nav{border:0;background:none;color:#90867d;font-size:20px;cursor:pointer}.nav.active{color:var(--rose)}.plus{width:48px;height:48px;border-radius:50%;border:0;background:var(--rose);color:#fff;font-size:28px;box-shadow:0 7px 18px #ef7f8950;cursor:pointer}
+.toast{display:none;position:absolute;z-index:20;left:18px;right:18px;bottom:78px;background:#343434;color:#fff;border-radius:15px;padding:13px;text-align:center;font-size:13px}.modal{display:none;position:absolute;inset:0;z-index:30;background:#0005;align-items:flex-end}.modal.show{display:flex}.sheet{background:#fffdf9;border-radius:26px 26px 0 0;width:100%;padding:18px 18px 30px}.sheet h2{font:600 21px Georgia,serif;margin:0 0 8px}.sheet p{font-size:13px;line-height:1.5;color:#6e665e}.close{float:right;border:0;background:#f3ede6;border-radius:50%;width:30px;height:30px;cursor:pointer}
+
+<style>
+/* MoodyCrew v2 interaction upgrades */
+.search-wrap{position:relative}
+.search-results{position:absolute;left:0;right:0;top:52px;background:#fffdf9;border:1px solid var(--line);border-radius:16px;z-index:12;box-shadow:0 12px 30px #0002;overflow:hidden;display:none}
+.search-results.show{display:block}
+.result{width:100%;text-align:left;border:0;border-bottom:1px solid #f0e7dd;background:#fffdf9;padding:12px 14px;cursor:pointer}
+.result:last-child{border-bottom:0}.result strong{display:block;font-size:13px}.result small{color:var(--muted);font-size:11px}
+.photo-real{background-size:cover!important;background-position:center!important}
+.file-input{display:none}
+.photo-chip{cursor:pointer}
+.helper{font-size:11px;color:var(--muted);margin-top:6px}
+.profile-actions{display:flex;gap:8px;margin:12px 0}
+.small-btn{border:1px solid var(--line);background:#fffdf9;border-radius:13px;padding:9px 12px;font-size:11px;cursor:pointer}
+.empty-note{padding:22px;text-align:center;color:var(--muted);font-size:12px}
+</style>
+
+
+<style>
+.worldmap-layer{position:absolute;inset:0;overflow:hidden;border-radius:inherit;pointer-events:none}
+.worldmap-layer svg{width:100%;height:100%;display:block}
+.world-country{fill:#f1e9df;stroke:#d8cbbb;stroke-width:.7}
+.world-country.land{fill:#e8dfd4}
+.map .dynamic-pin{z-index:5}
+.pin-card{position:absolute;z-index:7;left:12px;right:12px;bottom:12px;background:rgba(255,253,249,.96);border:1px solid #eadfd4;border-radius:18px;padding:13px;box-shadow:0 10px 24px #0002;display:none}
+.pin-card.show{display:block}
+.pin-card strong{font-size:13px}.pin-card small{display:block;color:var(--muted);margin-top:3px}
+.pin-card .mood-line{margin-top:8px;font-size:12px}
+.map-legend{position:absolute;z-index:6;left:12px;top:12px;background:rgba(255,253,249,.9);border:1px solid #eadfd4;border-radius:13px;padding:7px 10px;font-size:10px;color:var(--muted)}
+</style>
+
+
+<style>
+/* MoodyCrew v1 — baby pink flight-log identity */
+:root{
+  --mc-pink:#f6c8d8;
+  --mc-blush:#fbe4ec;
+  --mc-rose:#c87994;
+  --mc-cream:#fffaf7;
+  --mc-ink:#463d40;
+  --mc-airline:#9b1c31;
+}
+body{background:#f7eef1!important}
+.app{background:var(--mc-cream)!important;color:var(--mc-ink)}
+.brand,.logo{color:var(--mc-rose)!important}
+.pill,.tag{background:var(--mc-blush)!important}
+.save,.plus{background:var(--mc-pink)!important;color:#4b3940!important}
+.flight-log{margin:10px 0 14px;padding:13px 14px;border:1px solid #ead7de;border-radius:18px;background:linear-gradient(135deg,#fff,#fff2f6)}
+.flight-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.flight-code{font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--mc-airline)}
+.route{font-size:18px;font-weight:800}.route span{color:#b9a5ad;font-size:12px;margin:0 7px}
+.flight-meta{margin-top:7px;color:#8d7d83;font-size:10px;display:flex;gap:10px;flex-wrap:wrap}
+.airline-box{padding:12px 13px;border:1px solid #ead7de;border-radius:16px;background:#fff;margin-bottom:12px}
+.airline-box label{display:block;font-size:11px;font-weight:700;margin-bottom:7px}
+.airline-select{width:100%;padding:11px;border:1px solid #ead7de;border-radius:12px;background:#fffaf7;color:var(--mc-ink);font-size:13px}
+.swatches{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.swatch{width:30px;height:30px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #dfcfd5;cursor:pointer}
+.swatch.active{box-shadow:0 0 0 2px var(--mc-rose)}
+</style>
+
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="logo">moodycrew</div><div class="avatar"></div></header>
+
+<section id="map" class="screen active">
+<div class="map">
+<div class="map-legend">My Layover Map · world view</div><div class="map-top"><div class="pill">🗺️ My world · <b id="placeCount">146</b> places</div><button class="pill" onclick="showInfo()">ⓘ</button></div>
+<div class="pin one" onclick="place('Café Kitsuné','Paris, France','☕ cozy')"><b>♥</b></div>
+<div class="pin two" onclick="place('Shibuya Sky','Tokyo, Japan','✦ magical')"><b>✦</b></div>
+<div class="pin three" onclick="place('Nong Nooch Garden','Pattaya, Thailand','🌿 peaceful')"><b>●</b></div>
+<div class="pin four" onclick="place('The Beach','Dubai, UAE','☁ peaceful')"><b>♡</b></div>
+<div class="map-card" onclick="place('Café Kitsuné','Paris, France','☕ cozy')"><div class="photo"></div><div><h3>Café Kitsuné</h3><div class="muted">Paris, France · Apr 12, 2026</div><div class="tag">☕ cozy · loved it</div></div></div>
+</div></section>
+
+<section id="feed" class="screen"><div class="feed"><h1 class="feed-title">Moments</h1>
+<article class="post"><div class="post-photo"><div class="post-tag">☕ cozy</div></div><div class="post-body"><div class="user">sunmin · Paris, France</div><div class="caption">Unexpectedly found my new favorite café. 🤍</div><div class="actions"><button onclick="like(this)">♡ 24</button><button>♡ 3</button><button>▱ Save</button></div></div></article>
+<article class="post"><div class="post-photo b"><div class="post-tag">✦ magical</div></div><div class="post-body"><div class="user">joodiary · Tokyo, Japan</div><div class="caption">A little moment I want to remember.</div><div class="actions"><button onclick="like(this)">♡ 31</button><button>♡ 5</button><button>▱ Save</button></div></div></article>
+</div></section>
+
+<section id="add" class="screen"><div class="add"><h1>Add a memory</h1><input id="search" class="search" placeholder="🔎 Search a place..." value="Café de Flore">
+<div class="place-preview"><div class="place-image"></div><div class="place-copy"><h2 id="placeName">Café de Flore</h2><div class="muted" id="placeAddress">172 Bd Saint-Germain · Paris, France</div>
+<div class="question">How did you feel?</div>
+<div class="moods">
+<button class="mood sel" onclick="mood(this)">♥ loved</button><button class="mood" onclick="mood(this)">✦ magical</button><button class="mood" onclick="mood(this)">☁ peaceful</button><button class="mood" onclick="mood(this)">☕ cozy</button>
+<button class="mood" onclick="mood(this)">☺ fun</button><button class="mood" onclick="mood(this)">🌿 bittersweet</button><button class="mood" onclick="mood(this)">😐 meh</button><button class="mood" onclick="mood(this)">♡ never again</button>
+</div>
+<textarea id="memory" class="memory" placeholder="Write a little memory...">혼자 앉아서 커피 마셨던 시간. 바람도 좋고, 마음이 편안했던 순간.</textarea>
+<div class="photo-add" id="photoAddRow"><label class="photo-chip" for="photoInput">＋ Add photo</label>
+<input id="photoInput" class="file-input" type="file" accept="image/*"><div class="photo-chip">📅 Today</div></div>
+<div class="privacy"><span>Share on feed</span><input id="public" type="checkbox" checked></div>
+<button class="save" onclick="saveMemory()">Save Memory</button>
+</div></div></div></section>
+
+<section id="profile" class="screen"><div class="profile"><div class="profile-top"><div class="big-avatar"></div><div><h2>sunmin</h2><div class="muted">@moody.s · collecting beautiful moments</div></div></div>
+<div class="stats"><div><b id="profilePlaces">146</b><span>Places</span></div><div><b>12</b><span>Countries</span></div><div><b>38</b><span>Cities</span></div></div>
+<h3 style="font:600 19px Georgia,serif">Recently added</h3>
+<div class="flight-log">
+  <div class="flight-row">
+    <div><div class="flight-code" id="flightCode">CREW LOG · EK 073</div><div class="route">DXB <span>✈</span> CDG</div></div>
+    <div class="pill">32H Layover</div>
+  </div>
+  <div class="flight-meta"><span>✈ Flight Log</span><span>📍 Paris</span><span>💗 1 memory</span></div>
+</div>
+
+<div class="airline-box">
+  <label for="airlineSelect">My Airline ✈️</label>
+  <select id="airlineSelect" class="airline-select">
+    <option value="Emirates">Emirates</option>
+    <option value="Qatar Airways">Qatar Airways</option>
+    <option value="Etihad">Etihad</option>
+    <option value="Singapore Airlines">Singapore Airlines</option>
+    <option value="Korean Air">Korean Air</option>
+    <option value="ANA">ANA</option>
+    <option value="British Airways">British Airways</option>
+    <option value="Other">Other</option>
+  </select>
+  <div class="swatches" aria-label="Airline accent color">
+    <button type="button" class="swatch active" data-color="#9b1c31" style="background:#9b1c31" aria-label="Burgundy"></button>
+    <button type="button" class="swatch" data-color="#6d3b72" style="background:#6d3b72" aria-label="Plum"></button>
+    <button type="button" class="swatch" data-color="#5b9dcc" style="background:#5b9dcc" aria-label="Sky blue"></button>
+    <button type="button" class="swatch" data-color="#4d6b61" style="background:#4d6b61" aria-label="Sage"></button>
+    <button type="button" class="swatch" data-color="#7d8791" style="background:#7d8791" aria-label="Slate"></button>
+  </div>
+</div>
+<div class="profile-actions">
+<button class="small-btn" id="resetDemo">Reset demo</button>
+<button class="small-btn" id="showMemories">View my memories</button>
+</div>
+<div id="memoryList"></div>
+<div class="grid"><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div></div></div></section>
+
+<nav><button class="nav active" onclick="go('map',this)">⌖</button><button class="nav" onclick="go('feed',this)">⌂</button><button class="plus" onclick="go('add')">+</button><button class="nav" onclick="showToast('Saved memories will appear here ✨')">♡</button><button class="nav" onclick="go('profile',this)">◯</button></nav>
+<div id="toast" class="toast"></div>
+<div id="modal" class="modal"><div class="sheet"><button class="close" onclick="closeInfo()">×</button><h2>About MoodyCrew</h2><p>MoodyCrew is a place-based memory journal: save where you went, how it felt, and the little moments you want to remember.</p><p><b>Make every layover a memory.</b></p></div></div>
+</div>
+
+<script>
+(function(){
+  const root = document.querySelector('.app');
+  if(!root) return;
+
+  const places = [
+    {name:"Café Kitsuné", city:"Paris, France", mood:"Cozy ☕️", x:"23%", y:"34%"},
+    {name:"Café de Flore", city:"Paris, France", mood:"Magical ✨", x:"63%", y:"24%"},
+    {name:"Burj Khalifa", city:"Dubai, UAE", mood:"Loved 💗", x:"71%", y:"58%"},
+    {name:"Central Park", city:"New York, USA", mood:"Peaceful ☁️", x:"36%", y:"70%"},
+    {name:"The Ritz London", city:"London, UK", mood:"Loved 💗", x:"48%", y:"42%"},
+    {name:"Shibuya Crossing", city:"Tokyo, Japan", mood:"Fun 😂", x:"76%", y:"32%"},
+    {name:"Gardens by the Bay", city:"Singapore", mood:"Magical ✨", x:"31%", y:"56%"}
+  ];
+  const moods = ["Loved 💗","Magical ✨","Peaceful ☁️","Cozy ☕️","Fun 😂","Bittersweet 🌿","Meh 😐","Never again 💔"];
+  let memories = JSON.parse(localStorage.getItem("moodycrew_memories") || "[]");
+  let selectedPlace = places[0];
+  let selectedMood = "Loved 💗";
+  let photoData = "";
+
+  function $(id){ return document.getElementById(id); }
+  function toast(msg){
+    const t = document.querySelector('.toast');
+    t.textContent = msg; t.style.display='block';
+    clearTimeout(window.__mmToast);
+    window.__mmToast=setTimeout(()=>t.style.display='none',2200);
+  }
+  function navTo(id){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    const el=$(id); if(el) el.classList.add('active');
+    document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active', n.dataset.target===id));
+    if(id==="profile") renderProfile();
+    if(id==="map") renderMap();
+  }
+  document.querySelectorAll('.nav').forEach(n=>{
+    n.addEventListener('click',()=>navTo(n.dataset.target));
+  });
+  document.querySelector('.plus').addEventListener('click',()=>navTo('add'));
+
+  function renderSearch(query){
+    const box=$('searchResults');
+    const q=query.trim().toLowerCase();
+    if(!q){ box.classList.remove('show'); box.innerHTML=''; return; }
+    const hits=places.filter(p=>(p.name+" "+p.city).toLowerCase().includes(q)).slice(0,5);
+    box.innerHTML=hits.length ? hits.map((p,i)=>`<button type="button" class="result" data-place="${i}"><strong>${p.name}</strong><small>${p.city}</small></button>`).join('') :
+      '<div class="empty-note">No saved demo place found. Try Paris, Dubai, Tokyo…</div>';
+    box.classList.add('show');
+    box.querySelectorAll('.result').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        selectedPlace=hits[Number(btn.dataset.place)];
+        $('placeSearch').value=selectedPlace.name;
+        $('searchResults').classList.remove('show');
+        updatePlacePreview();
+        toast("Place selected ✨");
+      });
+    });
+  }
+
+  $('placeSearch').addEventListener('input',e=>renderSearch(e.target.value));
+  $('placeSearch').addEventListener('focus',e=>{ if(e.target.value) renderSearch(e.target.value); });
+
+  function updatePlacePreview(){
+    const title=document.querySelector('.place-copy h2');
+    const city=document.querySelector('.place-copy .muted');
+    if(title) title.textContent=selectedPlace.name;
+    if(city) city.textContent=selectedPlace.city;
+  }
+
+  document.querySelectorAll('.mood').forEach((m,i)=>{
+    m.addEventListener('click',()=>{
+      document.querySelectorAll('.mood').forEach(x=>x.classList.remove('sel'));
+      m.classList.add('sel');
+      selectedMood=moods[i];
+    });
+  });
+
+  $('photoInput').addEventListener('change',e=>{
+    const file=e.target.files && e.target.files[0];
+    if(!file) return;
+    const reader=new FileReader();
+    reader.onload=()=>{
+      photoData=reader.result;
+      const row=$('photoAddRow');
+      row.innerHTML='<div class="photo-chip photo-real" id="photoPreview"></div>';
+      $('photoPreview').style.backgroundImage=`url("${photoData}")`;
+      $('photoHelper').textContent="Photo ready ✨";
+    };
+    reader.readAsDataURL(file);
+  });
+
+  $('saveBtn').addEventListener('click',()=>{
+    const memory=$('memoryText').value.trim();
+    if(!selectedPlace || !selectedMood){ toast("Choose a place and mood first"); return; }
+    if(!memory){ toast("Write a little memory first 💭"); $('memoryText').focus(); return; }
+    memories.unshift({
+      id:Date.now(),
+      place:selectedPlace.name,
+      city:selectedPlace.city,
+      mood:selectedMood,
+      text:memory,
+      photo:photoData,
+      date:new Date().toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'})
+    });
+    localStorage.setItem("moodycrew_memories",JSON.stringify(memories));
+    localStorage.setItem("mm_places",String(memories.length));
+    $('memoryText').value='';
+    $('placeSearch').value='';
+    photoData='';
+    $('photoAddRow').innerHTML='<label class="photo-chip" for="photoInput">＋ Add photo</label><input id="photoInput" class="file-input" type="file" accept="image/*">';
+    $('photoHelper').textContent='Your selected photo stays in this browser in this demo.';
+    // Re-bind the recreated input
+    $('photoInput').addEventListener('change',e=>{
+      const file=e.target.files && e.target.files[0]; if(!file) return;
+      const reader=new FileReader();
+      reader.onload=()=>{photoData=reader.result;$('photoAddRow').innerHTML='<div class="photo-chip photo-real" id="photoPreview"></div>';$('photoPreview').style.backgroundImage=`url("${photoData}")`;$('photoHelper').textContent="Photo ready ✨";};
+      reader.readAsDataURL(file);
+    });
+    toast("Memory saved to your Layover Map 💗");
+    navTo('map');
+  });
+
+  async function renderWorldMap(){
+    const layer=$('worldMapLayer');
+    if(!layer || layer.dataset.loaded) return;
+    layer.dataset.loaded="loading";
+    try{
+      const d3=await import("https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm");
+      const world=await import("https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json/+esm");
+      const topo=await import("https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/+esm");
+      const countries=topo.feature(world.default || world, (world.default || world).objects.countries).features;
+      const w=600,h=360;
+      const svg=d3.create("svg").attr("viewBox",`0 0 ${w} ${h}`).attr("role","img").attr("aria-label","World map");
+      const projection=d3.geoNaturalEarth1().fitExtent([[8,8],[w-8,h-8]],{type:"FeatureCollection",features:countries});
+      const path=d3.geoPath(projection);
+      svg.selectAll("path").data(countries).join("path").attr("class","world-country").attr("d",path);
+      layer.replaceChildren(svg.node());
+      layer.dataset.loaded="yes";
+    }catch(e){
+      layer.dataset.loaded="fallback";
+      layer.innerHTML='<div style="position:absolute;inset:0;display:grid;place-items:center;color:#9b8e82;font-size:11px">World map loading…</div>';
+    }
+  }
+
+  function renderMap(){
+    const count=memories.length;
+    const stat=document.querySelector('.map-top .pill:last-child');
+    if(stat) stat.textContent=`${count || 4} memories`;
+    document.querySelectorAll('.map .dynamic-pin').forEach(x=>x.remove());
+    memories.slice(0,6).forEach((m,i)=>{
+      const p=places.find(x=>x.name===m.place)||places[i%places.length];
+      const pin=document.createElement('button');
+      pin.type='button'; pin.className='pin dynamic-pin';
+      pin.style.left=p.x; pin.style.top=p.y;
+      pin.title=m.place; pin.setAttribute('aria-label',m.place);
+      pin.innerHTML='<b>♥</b>';
+      pin.addEventListener('click',()=>{
+        const card=$('pinCard');
+        card.innerHTML=`<strong>${m.place}</strong><small>${m.city}</small><div class="mood-line">${m.mood} · ${m.text}</div>`;
+        card.classList.add('show');
+      });
+      document.querySelector('.map').appendChild(pin);
+    });
+  }
+
+  function renderProfile(){
+    const stat=document.querySelector('.stats b');
+    if(stat) stat.textContent=memories.length;
+    const list=$('memoryList');
+    if(!list) return;
+    if(!memories.length){list.innerHTML=''; return;}
+    list.innerHTML=memories.slice(0,4).map(m=>`
+      <div class="post" style="margin-bottom:10px">
+        ${m.photo ? `<div class="post-photo photo-real" style="background-image:url('${m.photo}')"></div>` : ''}
+        <div class="post-body"><div class="user">${m.place}</div><div class="caption">${m.mood} · ${m.text}</div><div class="muted">${m.city} · ${m.date}</div></div>
+      </div>`).join('');
+  }
+
+  $('showMemories').addEventListener('click',()=>{
+    renderProfile(); toast(memories.length ? `${memories.length} memories saved ✨` : "No memories yet");
+  });
+  $('resetDemo').addEventListener('click',()=>{
+    if(confirm("Reset saved demo memories?")){
+      memories=[]; localStorage.removeItem("moodycrew_memories"); localStorage.removeItem("mm_places");
+      renderProfile(); renderMap(); toast("Demo reset");
+    }
+  });
+
+  // Make the existing map card open the add-memory flow.
+  const card=document.querySelector('.map-card');
+  if(card) card.addEventListener('click',()=>{
+    selectedPlace=places[0];
+    $('placeSearch').value=selectedPlace.name;
+    updatePlacePreview();
+    navTo('add');
+  });
+
+
+  // Airline theme personalization: baby pink stays the base; accent is customizable.
+  const savedAirline=localStorage.getItem("mc_airline")||"Emirates";
+  const savedAccent=localStorage.getItem("mc_accent")||"#9b1c31";
+  const airlineSelect=$('airlineSelect');
+  if(airlineSelect){
+    airlineSelect.value=savedAirline;
+    document.documentElement.style.setProperty('--mc-airline',savedAccent);
+    airlineSelect.addEventListener('change',()=>{
+      localStorage.setItem("mc_airline",airlineSelect.value);
+      toast(`${airlineSelect.value} theme selected ✈️`);
+    });
+    document.querySelectorAll('.swatch').forEach(s=>{
+      s.classList.toggle('active',s.dataset.color===savedAccent);
+      s.addEventListener('click',()=>{
+        const c=s.dataset.color;
+        document.documentElement.style.setProperty('--mc-airline',c);
+        localStorage.setItem("mc_accent",c);
+        document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));
+        s.classList.add('active');
+        toast("Airline accent updated 🎀");
+      });
+    });
+  }
+
+
+  // Navigation compatibility for the original prototype buttons.
+  // The HTML uses onclick="go('screen', this)", so provide the handler and
+  // bind the Profile button to the real profile screen.
+  window.go = function(id, el){
+    navTo(id);
+  };
+  window.showToast = function(msg){ toast(msg); };
+
+  document.querySelectorAll('.nav').forEach(n=>{
+    const handler = n.getAttribute('onclick') || '';
+    if(handler.includes("showToast('Saved memories")){
+      n.setAttribute('onclick', "go('profile', this)");
+    }
+  });
+
+  // Seed visual map with original pins and initialize.
+  renderMap();
+  renderWorldMap();
+  updatePlacePreview();
+})();
+</script>
+
+</body></html>
